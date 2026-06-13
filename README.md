@@ -1,16 +1,27 @@
-# React + Vite
+# 📱 MVP: Sitio Web PWA para Comunicación Interna
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto nace de la necesidad de una empresa privada que acudió a mis servicios buscando una solución rápida y eficaz para conectar con sus trabajadores. Para evitar los baches, costes de desarrollo y tiempos de aprobación de las tiendas de apps nativas (Play Store / App Store), optamos por desarrollar una **PWA (Progressive Web App)**. 
 
-Currently, two official plugins are available:
+El resultado es una aplicación web moderna que los empleados pueden instalar directamente en la pantalla de inicio de sus dispositivos (Android/iOS), luciendo y funcionando con la fluidez de una app nativa.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Funcionalidades Principales
 
-## React Compiler
+* **🔐 Autenticación y Control de Roles:** Sistema de inicio de sesión seguro. Cada usuario cuenta con un rol específico que define sus permisos dentro de la plataforma (por ejemplo, restricciones de edición para empleados y acceso total para administración).
+* **📢 Tablón de Anuncios:** Un espacio dinámico para emitir la información diaria de la empresa, asegurando que las novedades importantes lleguen a cada trabajador al instante.
+* **🏢 Valores Corporativos:** Una sección dedicada a plasmar la cultura y pilares de la organización, actualizable en tiempo real.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tecnologías y Librerías Utilizadas
 
-## Expanding the ESLint configuration
+* **Frontend:** React (empaquetado con Vite) + Tailwind CSS para un diseño limpio, moderno y enfocado $100\%$ en dispositivos móviles (*Mobile-First*).
+* **Backend & Base de Datos:** Supabase (PostgreSQL), aprovechando su sistema de autenticación nativa y el motor de *Postgres Changes* para la actualización de datos en tiempo real.
+* **Despliegue:** Vercel (conectado al repositorio para integración continua).
+* **Motor PWA:** `vite-plugin-pwa` para la generación automática del manifiesto, iconos y el Service Worker encargado de la instalación en los terminales.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 💻 Instalación en Local
+
+Si deseas clonar este repositorio para realizar pruebas o desarrollo, sigue estos pasos en tu entorno de terminal (preferiblemente Linux/WSL2):
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/CamJ1203/App_empresa.git](https://github.com/CamJ1203/App_empresa.git)
+   cd mi-app
