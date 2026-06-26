@@ -506,20 +506,20 @@ export default function Dashboard({ session }) {
                 <p className="text-sm text-gray-600 leading-6">
                   En esta página puedes ver los valores de la empresa y acceder a los documentos PDF compartidos. Si eres administrador, también puedes actualizar valores y subir PDFs desde aquí.
                 </p>
-+                {!adminExists && (
-+                  <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
-+                    <p className="text-sm font-semibold text-yellow-700">No existe administrador</p>
-+                    <p className="text-sm text-gray-600 mt-1">Puedes crear el rol de administrador para tu cuenta actual ({session.user.email}) si lo deseas.</p>
-+                    <button
-+                      onClick={crearMiAdmin}
-+                      disabled={creatingAdmin}
-+                      className="mt-3 w-full rounded-2xl bg-yellow-600 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-700"
-+                    >
-+                      {creatingAdmin ? 'Creando...' : 'Crear rol admin para esta cuenta'}
-+                    </button>
-+                    {adminMessage && <p className="mt-2 text-sm text-gray-600">{adminMessage}</p>}
-+                  </div>
-+                )}
+                {!adminExists && (
+                  <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
+                    <p className="text-sm font-semibold text-yellow-700">No existe administrador</p>
+                    <p className="text-sm text-gray-600 mt-1">Puedes crear el rol de administrador para tu cuenta actual ({session.user.email}) si lo deseas.</p>
+                    <button
+                      onClick={crearMiAdmin}
+                      disabled={creatingAdmin}
+                      className="mt-3 w-full rounded-2xl bg-yellow-600 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-700"
+                    >
+                      {creatingAdmin ? 'Creando...' : 'Crear rol admin para esta cuenta'}
+                    </button>
+                    {adminMessage && <p className="mt-2 text-sm text-gray-600">{adminMessage}</p>}
+                  </div>
+                )}
               </div>
             </div>
 
