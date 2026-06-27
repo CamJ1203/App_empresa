@@ -9,9 +9,6 @@ export default function Dashboard({ session }) {
   const [savingValues, setSavingValues] = useState(false)
   const [configMessage, setConfigMessage] = useState('')
   const [esAdmin, setEsAdmin] = useState(false)
-  const [adminExists, setAdminExists] = useState(false)
-  const [creatingAdmin, setCreatingAdmin] = useState(false)
-  const [adminMessage, setAdminMessage] = useState('')
 
   const [feedPosts, setFeedPosts] = useState([])
   const [feedLoading, setFeedLoading] = useState(true)
@@ -49,22 +46,6 @@ export default function Dashboard({ session }) {
 
     cargarRol()
   }, [session.user.email])
-
-  useEffect(() => {
-    const checkAdminExist = async () => {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('email')
-        .eq('role', 'admin')
-        .limit(1)
-        .maybeSingle()
-
-      setAdminExists(!!data)
-      if (error && error.code !== 'PGRST116') console.error('Error comprobando admins:', error)
-    }
-
-    checkAdminExist()
-  }, [])
 
   const nombre = session.user.email.split('@')[0]
   const nombreMostrar = nombre.charAt(0).toUpperCase() + nombre.slice(1)
@@ -270,28 +251,6 @@ export default function Dashboard({ session }) {
     setPdfUploading(false)
   }
 
-  const crearMiAdmin = async () => {
-    setCreatingAdmin(true)
-    setAdminMessage('')
-    const email = session.user.email?.trim().toLowerCase()
-
-    try {
-      const { error } = await supabase.from('user_roles').insert({ email, role: 'admin' })
-      if (error) {
-        setAdminMessage('No se pudo crear: ' + error.message)
-      } else {
-        setAdminMessage('Rol admin creado para ' + email)
-        setAdminExists(true)
-        setEsAdmin(true)
-      }
-    } catch (err) {
-      setAdminMessage('Error creando rol: ' + String(err))
-    }
-
-    setCreatingAdmin(false)
-    setTimeout(() => setAdminMessage(''), 4000)
-  }
-
   const cerrarSesion = async () => {
     await supabase.auth.signOut()
   }
@@ -424,25 +383,18 @@ export default function Dashboard({ session }) {
                   </div>
                 )}
               </div>
-
+            {esAdmin && (
               <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Indicaciones</h3>
-                <p className="text-sm text-gray-600 leading-6">
-                  Este es el feed principal. El contenido más reciente siempre aparece primero. El administrador puede publicar avisos nuevos, y el equipo puede verlos en cascada.
-                </p>
                 <div className="mt-6 space-y-4">
-                  <div className="rounded-3xl bg-indigo-50 p-4">
-                    <p className="text-sm font-semibold text-indigo-700">Para trabajadores</p>
-                    <p className="text-sm text-gray-600 mt-1">Verás los anuncios ordenados de más nuevo a más antiguo, con enlaces para acceder a encuestas o trabajos didácticos.</p>
-                  </div>
-                  {esAdmin && (
+                  
                     <div className="rounded-3xl bg-emerald-50 p-4">
                       <p className="text-sm font-semibold text-emerald-700">Para el admin</p>
                       <p className="text-sm text-gray-600 mt-1">Puedes publicar texto, añadir imagen usando URL o subir archivo de imagen directamente.</p>
                     </div>
-                  )}
+                  
                 </div>
               </div>
+            )}
             </div>
 
             <div className="space-y-4">
@@ -506,30 +458,17 @@ export default function Dashboard({ session }) {
                 <p className="text-sm text-gray-600 leading-6">
                   En esta página puedes ver los valores de la empresa y acceder a los documentos PDF compartidos. Si eres administrador, también puedes actualizar valores y subir PDFs desde aquí.
                 </p>
-                {!adminExists && (
-                  <div className="mt-4 rounded-2xl border border-yellow-200 bg-yellow-50 p-4">
-                    <p className="text-sm font-semibold text-yellow-700">No existe administrador</p>
-                    <p className="text-sm text-gray-600 mt-1">Puedes crear el rol de administrador para tu cuenta actual ({session.user.email}) si lo deseas.</p>
-                    <button
-                      onClick={crearMiAdmin}
-                      disabled={creatingAdmin}
-                      className="mt-3 w-full rounded-2xl bg-yellow-600 px-4 py-2 text-sm font-semibold text-white hover:bg-yellow-700"
-                    >
-                      {creatingAdmin ? 'Creando...' : 'Crear rol admin para esta cuenta'}
-                    </button>
-                    {adminMessage && <p className="mt-2 text-sm text-gray-600">{adminMessage}</p>}
-                  </div>
-                )}
               </div>
             </div>
 
             <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
               <div className="space-y-5">
+              {esAdmin && (
                 <div className="bg-white rounded-3xl shadow-sm p-6">
                   <div className="flex items-center justify-between gap-3 mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">Valores de la empresa</h3>
                   </div>
-                  {esAdmin ? (
+                  
                     <div className="space-y-4">
                       <textarea
                         value={borrador}
@@ -551,13 +490,8 @@ export default function Dashboard({ session }) {
                         </p>
                       )}
                     </div>
-                  ) : (
-                    <div className="rounded-3xl border border-dashed border-gray-200 bg-slate-50 p-4 text-sm text-gray-600">
-                      <p className="font-semibold text-gray-900">Solo administradores pueden editar los valores.</p>
-                      <p className="mt-2">Contacta con tu administrador si necesitas actualizar algún valor.</p>
-                    </div>
-                  )}
-                </div>
+                  
+                </div>)}
 
                 <div className="bg-white rounded-3xl shadow-sm p-6">
                   <div className="flex items-center justify-between gap-3 mb-4">
