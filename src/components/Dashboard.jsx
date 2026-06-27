@@ -83,27 +83,27 @@ export default function Dashboard({ session }) {
     cargarValores()
   }, [])
 
+  const cargarFeed = async () => {
+    const { data, error } = await supabase
+      .from('feed_posts')
+      .select('id,title,body,image_url,link_url,author_email,created_at')
+      .order('created_at', { ascending: false })
+
+    if (!error) setFeedPosts(data || [])
+    setFeedLoading(false)
+  }
+
+  const cargarPdfs = async () => {
+    const { data, error } = await supabase
+      .from('pdf_files')
+      .select('id,name,url,uploaded_by,created_at')
+      .order('created_at', { ascending: false })
+
+    if (!error) setPdfFiles(data || [])
+    setPdfLoading(false)
+  }
+
   useEffect(() => {
-    const cargarFeed = async () => {
-      const { data, error } = await supabase
-        .from('feed_posts')
-        .select('id,title,body,image_url,link_url,author_email,created_at')
-        .order('created_at', { ascending: false })
-
-      if (!error) setFeedPosts(data || [])
-      setFeedLoading(false)
-    }
-
-    const cargarPdfs = async () => {
-      const { data, error } = await supabase
-        .from('pdf_files')
-        .select('id,name,url,uploaded_by,created_at')
-        .order('created_at', { ascending: false })
-
-      if (!error) setPdfFiles(data || [])
-      setPdfLoading(false)
-    }
-
     cargarFeed()
     cargarPdfs()
 
@@ -187,23 +187,29 @@ export default function Dashboard({ session }) {
       imageUrl = publicData.publicUrl
     }
 
-    const { error } = await supabase.from('feed_posts').insert({
-      title: feedTitle || null,
-      body: feedBody || null,
-      image_url: imageUrl || null,
-      link_url: feedLinkUrl || null,
-      author_email: session.user.email,
-    })
+    const { data, error } = await supabase.from('feed_posts')
+      .insert({
+        title: feedTitle || null,
+        body: feedBody || null,
+        image_url: imageUrl || null,
+        link_url: feedLinkUrl || null,
+        author_email: session.user.email,
+      })
+      .select('id,title,body,image_url,link_url,author_email,created_at')
+      .single()
 
     if (error) {
       setFeedMessage('Error guardando anuncio: ' + error.message)
     } else {
+      const newPost = Array.isArray(data) ? data[0] : data
+      setFeedPosts((prev) => [newPost, ...(prev || [])])
       setFeedMessage('Anuncio publicado correctamente.')
       setFeedTitle('')
       setFeedBody('')
       setFeedLinkUrl('')
       setFeedImageUrl('')
       setFeedImageFile(null)
+      cargarFeed()
     }
     setFeedSaving(false)
   }
@@ -234,16 +240,20 @@ export default function Dashboard({ session }) {
 
     const publicUrl = publicData.publicUrl
 
-    const { error } = await supabase.from('pdf_files').insert({
-      name: pdfName || pdfFile.name,
-      url: publicUrl,
-      file_path: filePath,
-      uploaded_by: session.user.email,
-    })
+    const { data, error } = await supabase.from('pdf_files')
+      .insert({
+        name: pdfName || pdfFile.name,
+        url: publicUrl,
+        file_path: filePath,
+        uploaded_by: session.user.email,
+      })
+      .select('id,name,url,file_path,uploaded_by,created_at')
+      .single()
 
     if (error) {
       setPdfMessage('Error guardando metadatos: ' + error.message)
     } else {
+      setPdfFiles((prev) => [data, ...(prev || [])])
       setPdfMessage('PDF subido correctamente.')
       setPdfName('')
       setPdfFile(null)
